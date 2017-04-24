@@ -1,0 +1,32 @@
+version: '2'
+
+services:
+  testapp:
+    build: testapp/
+    networks:
+      - net
+  elasticsearch:
+    build: elasticsearch/
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    networks:
+      - net
+  logstash:
+    build: logstash/
+    command: logstash -f /usr/share/logstash/config/logstash.conf
+    ports:
+      - "8080:8080"
+    networks:
+      - net
+  kibana:
+    build: kibana/
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+    networks:
+      - net
+networks:
+  net:
